@@ -1,1 +1,1 @@
-Simple Twitter clone in rails.
+A simple Twitter clone in rails.
