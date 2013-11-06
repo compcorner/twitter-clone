@@ -13,6 +13,7 @@ describe User do
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
+  it { should respond_to(:session_token) }
   it { should respond_to(:authenticate) }
 
   it { should be_valid }
@@ -112,5 +113,10 @@ describe User do
     }
 
     it { should_not be_valid }
+  end
+
+  describe "session token" do
+    before { @user.save }
+    its(:session_token) { should_not be_blank }
   end
 end

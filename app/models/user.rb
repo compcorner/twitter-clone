@@ -5,8 +5,25 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }
   has_secure_password
+  before_create :create_session_token
 
   before_save do
     self.email = email.downcase
   end
+
+  def User.new_session_token
+    token = SecureRandom.urlsafe_base64
+    return token
+  end
+
+  def User.encrypt(token)
+    encrypted = Digest::SHA1.hexdigest(token.to_s)
+    return encrypted
+  end
+
+  private
+
+    def create_session_token
+      self.session_token = User.encrypt(User.new_session_token)
+    end
 end
