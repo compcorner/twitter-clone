@@ -9,6 +9,10 @@ module SessionsHelper
     @current_user ||= User.find_by(session_token: encrypted_session_token)
   end
 
+  def current_user?(user)
+    user == current_user
+  end
+
   def sign_in(user)
     session_token = User.new_session_token
     cookies.permanent[:session_token] = session_token
@@ -25,5 +29,14 @@ module SessionsHelper
   def sign_out
     self.current_user = nil
     cookies.delete(:session_token)
+  end
+
+  def redirect_back_or(default)
+    redirect_to(session[:return_to] || default)
+    session.delete(:return_to)
+  end
+
+  def store_location
+    session[:return_to] = request.url if request.get?
   end
 end
