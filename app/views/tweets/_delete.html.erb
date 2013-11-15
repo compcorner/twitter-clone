@@ -1,0 +1,5 @@
+<% if current_user?(tweet.user) %>
+  <%= link_to "delete", tweet, method: :delete,
+                               data: { confirm: "Delete tweet?" },
+                               title: tweet.content %>
+<% end %>

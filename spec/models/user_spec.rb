@@ -16,6 +16,8 @@ describe User do
   it { should respond_to(:session_token) }
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
+  it { should respond_to(:tweets) }
+  it { should respond_to(:timeline) }
 
   it { should be_valid }
   it { should_not be_admin }
@@ -129,5 +131,43 @@ describe User do
   describe "session token" do
     before { @user.save }
     its(:session_token) { should_not be_blank }
+  end
+
+  describe "tweet associations" do
+    before { @user.save }
+
+    let!(:old_tweet) do
+      FactoryGirl.create(:tweet, user: @user, created_at: 1.day.ago)
+    end
+    let!(:new_tweet) do
+      FactoryGirl.create(:tweet, user: @user, created_at: 1.hour.ago)
+    end
+    let!(:older_tweet) do
+      FactoryGirl.create(:tweet, user: @user, created_at: 1.year.ago)
+    end
+
+    it "should have the right tweets in the right order" do
+      expect(@user.tweets.to_a).to eq [new_tweet, old_tweet, older_tweet]
+    end
+
+    it "should destroy associated tweets" do
+      tweets = @user.tweets.to_a
+      @user.destroy
+      expect(tweets).not_to be_empty
+      tweets.each do |tweet|
+        expect(Tweet.where(id: tweet.id)).to be_empty
+      end
+    end
+
+    describe "timeline" do
+      let(:unfollowed_tweet) do
+        FactoryGirl.create(:tweet, user: FactoryGirl.create(:user))
+      end
+
+      its(:timeline) { should include(new_tweet) }
+      its(:timeline) { should include(old_tweet) }
+      its(:timeline) { should include(older_tweet) }
+      its(:timeline) { should_not include(unfollowed_tweet) }
+    end
   end
 end

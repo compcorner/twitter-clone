@@ -1,0 +1,6 @@
+<% if @tweets.any? %>
+  <ol class="tweets">
+    <%= render partial: 'tweets/tweet', collection: @tweets %>
+  </ol>
+  <%= will_paginate @tweets %>
+<% end %>

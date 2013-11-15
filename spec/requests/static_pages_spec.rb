@@ -10,6 +10,22 @@ describe "StaticPages" do
     it { should have_title("Twitter") }
     it { should_not have_title("Home") }
     it { should_not have_title('Twitter - Twitter') }
+
+    describe "for signed-in users" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:tweet, user: user, content: "Hello, world")
+        FactoryGirl.create(:tweet, user: user, content: "Goodbye, world")
+        sign_in user
+        visit root_path
+      end
+
+      it "should render the user's timeline" do
+        user.timeline.each do |item|
+          expect(page).to have_selector("li#tweet_#{item.id}", text: item.content)
+        end
+      end
+    end
   end
 
   describe "Help page" do

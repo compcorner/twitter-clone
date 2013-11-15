@@ -1,0 +1,11 @@
+<li id="tweet_<%= tweet.id %>" class="clearfix">
+  <%= link_to gravatar_for(tweet.user), tweet.user %>
+  <span class="user">
+    <%= link_to tweet.user.name, tweet.user %>
+  </span>
+  <span class="content"><%= tweet.content %></span>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(tweet.created_at) %> ago.
+  </span>
+  <%= render 'tweets/delete', tweet: tweet %>
+</li>

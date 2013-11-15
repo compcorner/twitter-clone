@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  has_many :tweets, dependent: :destroy
   validates :name, presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX },
@@ -6,6 +7,10 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 6 }
   has_secure_password
   before_create :create_session_token
+
+  def timeline
+    Tweet.where("user_id = ?", id)
+  end
 
   before_save do
     self.email = email.downcase

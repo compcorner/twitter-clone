@@ -8,4 +8,13 @@
       </h1>
     </section>
   </aside>
+  <div class="span8">
+    <% if @user.tweets.any? %>
+      <h3>Timeline (<%= @user.tweets.count %> tweets)</h3>
+      <ul class='tweets'>
+        <%= render @tweets %>
+      </ul>
+      <%= will_paginate @tweets %>
+    <% end %>
+  </div>
 </div>

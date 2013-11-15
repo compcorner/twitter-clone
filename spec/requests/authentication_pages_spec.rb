@@ -91,6 +91,18 @@ describe "Authentication" do
           it { should have_title('Sign in') }
         end
       end
+
+      describe "in the Tweets controller" do
+        describe "submitting to the create action" do
+          before { post tweets_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete tweet_path(FactoryGirl.create(:tweet)) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
     end
 
     describe "as the wrong user" do
@@ -128,7 +140,7 @@ describe "Authentication" do
       before { sign_in admin, no_capybara: true }
 
       describe "submitting a DELETE request to Users#destroy for yourself" do
-        # kick yourself in the foot
+        # shoot yourself in the foot
         before { delete user_path(admin) }
         specify { expect(response).to redirect_to(root_url) }
         specify {
