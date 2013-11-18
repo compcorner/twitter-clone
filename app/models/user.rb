@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   before_create :create_session_token
 
   def timeline
-    Tweet.where("user_id = ?", id)
+    Tweet.from_users_followed_by(self)
   end
 
   before_save do

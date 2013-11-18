@@ -169,11 +169,22 @@ describe User do
       let(:unfollowed_tweet) do
         FactoryGirl.create(:tweet, user: FactoryGirl.create(:user))
       end
+      let(:followed_user) { FactoryGirl.create(:user) }
+
+      before do
+        @user.follow!(followed_user)
+        3.times { followed_user.tweets.create!(content: "∇·E = ρ/ε0, ∇·B = 0, ∇xE = -∂Β/∂t, ∇xB = μ0(J + ε0 ∂E/∂t)") }
+      end
 
       its(:timeline) { should include(new_tweet) }
       its(:timeline) { should include(old_tweet) }
       its(:timeline) { should include(older_tweet) }
       its(:timeline) { should_not include(unfollowed_tweet) }
+      its(:timeline) do
+        followed_user.tweets.each do |tweet|
+          should include(tweet)
+        end
+      end
     end
   end
 
